@@ -3,20 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
+  "type": "module",
+
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
   "author": "",
   "license": "ISC",
-  "type": "module",
   "dependencies": {
     "axios": "^1.7.7",
-    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "ipfs-http-client": "^60.0.1",
-    "multer": "^1.4.5-lts.1",
-    "nodemon": "^3.1.4",
-    "pinata": "^1.1.0"
+    "nodemon": "^3.1.4"
   }
 }
