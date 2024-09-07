@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
@@ -10,6 +10,11 @@ export function Header() {
   const { connect, connectors } = useConnect();
   const { disconnect } = useDisconnect();
   const { switchChain } = useSwitchChain();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleConnect = async () => {
     if (isConnected) {
@@ -48,13 +53,15 @@ export function Header() {
                 }}
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               >
-                <div>
-                  {isConnected ? 'Disconnect' : 'Connect Wallet'}
-                </div>
+                {mounted && (
+                  <div>
+                    {isConnected ? 'Disconnect' : 'Connect Wallet'}
+                  </div>
+                )}
               </button>
             )}
           </ConnectButton.Custom>
-          {isConnected && (
+          {mounted && isConnected && (
             <select
               onChange={(e) => switchChain?.({ chainId: parseInt(e.target.value) })}
               value={chain?.id}
