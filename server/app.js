@@ -25,8 +25,14 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 
     const file = new File([req.file.buffer], req.file.originalname, { type: req.file.mimetype });
     const upload = await pinata.upload.file(file);
-    res.json(upload);
-  } catch (error) {
+    res.json({ 
+      success: true, 
+      cid: upload.IpfsHash,
+      name: req.file.originalname,
+      size: req.file.size,
+      mimetype: req.file.mimetype
+    });
+    } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred during file upload' });
   }
@@ -43,7 +49,6 @@ app.get('/file/:cid', async (req, res) => {
   }
 });
 
-// Route to create a signed URL
 app.get('/signed-url/:cid', async (req, res) => {
   try {
     const { cid } = req.params;
