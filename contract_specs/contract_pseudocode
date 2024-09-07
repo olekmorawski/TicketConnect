@@ -1,0 +1,44 @@
+
+var account = 0xdeafbeef;
+
+class Ticket
+{
+   string ticketId;
+
+   string vendorDomainName;
+
+   string eventName;
+   string eventLocation;
+   financial originalPrice;
+   timestamp arrivedAt;
+
+   key ecdhTicketSecretPart;
+};
+
+Array<Ticket> list_tickets();
+
+private void add_ticket(Ticket ticket)
+
+uint market_sell(Ticket ticket, financial price)
+{
+
+   return offerId;
+}
+
+bool buy(uint offerId)
+{
+
+   if(storage.accounts[account].amount >= market.offers[offerId].price)
+   {
+      return true;
+   }
+   else
+   {
+      return false;
+   }
+}
+
+void announce_ticket_redeemed(Ticket ticket)
+{
+
+}

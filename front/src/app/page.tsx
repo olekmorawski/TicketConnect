@@ -10,9 +10,24 @@ interface KeyPair {
   ecdhPublicKey: string;
 }
 
+interface Item {
+  id: number;
+  title: string;
+  price: number;
+  imageUrl: string;
+}
+
 function TicketInterface() {
   const [keyPairs, setKeyPairs] = useState<KeyPair[]>([]);
   const { isConnected } = useAccount();
+
+  // Sample items data
+  const items: Item[] = [
+    { id: 1, title: "Concert Ticket", price: 50, imageUrl: "/api/placeholder/200/200" },
+    { id: 2, title: "Movie Pass", price: 15, imageUrl: "/api/placeholder/200/200" },
+    { id: 3, title: "Sports Event", price: 80, imageUrl: "/api/placeholder/200/200" },
+    { id: 4, title: "Theater Show", price: 65, imageUrl: "/api/placeholder/200/200" },
+  ];
 
   // Add contract write hook here
   // const { write } = useContractWrite({...})
@@ -62,6 +77,17 @@ function TicketInterface() {
           Swap
         </button>
       </div>
+      
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        {items.map((item) => (
+          <div key={item.id} className="border rounded-lg p-4 flex flex-col items-center">
+            <img src={item.imageUrl} alt={item.title} className="w-full h-40 object-cover mb-2 rounded" />
+            <h3 className="text-lg font-semibold">{item.title}</h3>
+            <p className="text-gray-600">${item.price}</p>
+          </div>
+        ))}
+      </div>
+
       {keyPairs.length > 0 && (
         <div className="mt-4">
           <h3 className="text-lg font-semibold">Generated Key Pairs:</h3>

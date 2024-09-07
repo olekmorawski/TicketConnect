@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
 import { zircuitTestnet, mantleTestnet, scrollSepolia, celoAlfajores, optimismSepolia } from "viem/chains";
@@ -29,7 +30,14 @@ export function Header() {
   return (
     <header className="flex flex-col items-start p-4">
       <div className="flex justify-between items-center w-full mb-4">
-        <h1 className="text-2xl font-bold">Ticket Swap</h1>
+        <div className="flex items-center space-x-6">
+          <h1 className="text-2xl font-bold">Ticket Swap</h1>
+          <nav>
+            <Link href="/swap" className="text-blue-600 hover:text-blue-800 font-semibold">
+              Swap Tickets
+            </Link>
+          </nav>
+        </div>
         <div className="flex items-center space-x-4">
           <ConnectButton.Custom>
             {({ openConnectModal }) => (
@@ -39,9 +47,10 @@ export function Header() {
                   if (!isConnected) openConnectModal();
                 }}
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              ><div>
-                 {isConnected ? 'Disconnect' : 'Connect Wallet'}
-              </div>
+              >
+                <div>
+                  {isConnected ? 'Disconnect' : 'Connect Wallet'}
+                </div>
               </button>
             )}
           </ConnectButton.Custom>
