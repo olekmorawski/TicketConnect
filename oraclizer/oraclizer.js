@@ -2,7 +2,7 @@ const SMTP = require('./smtp');
 const net = require('net');
 net.createServer((client) =>
 {
-   console.log("new connection from", client.remoteFamily, client.remoteAddress);
+   console.log("new connection from", client.remoteFamily, client.remoteAddress, client.remotePort);
    SMTP.GreetClient(client);
 
    client.on('data', (data) =>
