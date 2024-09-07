@@ -1,20 +1,22 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
 import { zircuitTestnet, mantleTestnet, scrollSepolia, celoAlfajores, optimismSepolia } from "viem/chains";
+import { usePasswordConfirmation } from "@/components/Providers";
 
 export function Header() {
   const { address, isConnected, chain } = useAccount();
   const { connect, connectors } = useConnect();
   const { disconnect } = useDisconnect();
   const { switchChain } = useSwitchChain();
-  const [mounted, setMounted] = useState(false);
+  const { isPasswordConfirmed } = usePasswordConfirmation();
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    console.log("Header - isConnected:", isConnected);
+    console.log("Header - isPasswordConfirmed:", isPasswordConfirmed);
+  }, [isConnected, isPasswordConfirmed]);
 
   const handleConnect = async () => {
     if (isConnected) {
@@ -38,9 +40,11 @@ export function Header() {
         <div className="flex items-center space-x-6">
           <h1 className="text-2xl font-bold">Ticket Swap</h1>
           <nav>
-            <Link href="/swap" className="text-blue-600 hover:text-blue-800 font-semibold">
-              Swap Tickets
-            </Link>
+          {isConnected && isPasswordConfirmed && (
+              <Link href="/swap" className="text-blue-600 hover:text-blue-800 font-semibold">
+                Swap Tickets
+              </Link>
+            )}
           </nav>
         </div>
         <div className="flex items-center space-x-4">
@@ -53,15 +57,13 @@ export function Header() {
                 }}
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               >
-                {mounted && (
-                  <div>
-                    {isConnected ? 'Disconnect' : 'Connect Wallet'}
-                  </div>
-                )}
+                <div>
+                  {isConnected ? 'Disconnect' : 'Connect Wallet'}
+                </div>
               </button>
             )}
           </ConnectButton.Custom>
-          {mounted && isConnected && (
+          {isConnected && (
             <select
               onChange={(e) => switchChain?.({ chainId: parseInt(e.target.value) })}
               value={chain?.id}
