@@ -2,12 +2,12 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
+import { useConnect, useDisconnect, useSwitchChain } from "wagmi";
 import { zircuitTestnet, mantleTestnet, scrollSepolia, celoAlfajores, optimismSepolia } from "viem/chains";
-import { usePasswordConfirmation } from "@/components/Providers";
+import { usePasswordConfirmation, useWallet } from "@/components/Providers";
 
 export function Header() {
-  const { address, isConnected, chain } = useAccount();
+  const { isConnected, address, chain } = useWallet();
   const { connect, connectors } = useConnect();
   const { disconnect } = useDisconnect();
   const { switchChain } = useSwitchChain();
@@ -16,7 +16,8 @@ export function Header() {
   useEffect(() => {
     console.log("Header - isConnected:", isConnected);
     console.log("Header - isPasswordConfirmed:", isPasswordConfirmed);
-  }, [isConnected, isPasswordConfirmed]);
+    console.log("Header - chain:", chain);
+  }, [isConnected, isPasswordConfirmed, chain]);
 
   const handleConnect = async () => {
     if (isConnected) {
@@ -63,10 +64,10 @@ export function Header() {
               </button>
             )}
           </ConnectButton.Custom>
-          {isConnected && (
+          {isConnected && chain && (
             <select
-              onChange={(e) => switchChain?.({ chainId: parseInt(e.target.value) })}
-              value={chain?.id}
+              onChange={(e) => switchChain({ chainId: parseInt(e.target.value) })}
+              value={chain.id}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
             >
               {networks.map((network) => (

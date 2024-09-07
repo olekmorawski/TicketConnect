@@ -4,7 +4,7 @@ import { useAccount } from "wagmi";
 import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
 import * as secp256k1 from '@noble/secp256k1';
 import { useRouter } from 'next/navigation';
-import { usePasswordConfirmation } from "@/components/Providers";
+import { usePasswordConfirmation, useWallet } from "@/components/Providers";
 
 interface KeyPair {
   publicKey: `0x${string}`;
@@ -24,7 +24,7 @@ interface Item {
 
 function TicketInterface() {
   const [keyPairs, setKeyPairs] = useState<KeyPair[]>([]);
-  const { address, isConnected } = useAccount();
+  const { isConnected, address } = useWallet();
   const router = useRouter();
   const [hasSetPassword, setHasSetPassword] = useState(false);
   const [password, setPassword] = useState("");
@@ -34,7 +34,7 @@ function TicketInterface() {
   const { isPasswordConfirmed, setIsPasswordConfirmed } = usePasswordConfirmation();
 
   useEffect(() => {
-    console.log("useEffect triggered. IsConnected:", isConnected, "Address:", address);
+    console.log("TicketInterface - IsConnected:", isConnected, "Address:", address);
     if (isConnected && address) {
       const storedPassword = localStorage.getItem(`password_${address}`);
       setHasSetPassword(!!storedPassword);
@@ -85,7 +85,7 @@ function TicketInterface() {
     if (password === confirmPassword) {
       localStorage.setItem(`password_${address}`, password);
       setHasSetPassword(true);
-      setIsPasswordConfirmed(true);  // Set this instead of isAuthenticated
+      setIsPasswordConfirmed(true);
       setErrorMessage("");
       console.log("Password set successfully");
     } else {
@@ -107,12 +107,13 @@ function TicketInterface() {
     }
   };
 
-  console.log("Rendering component. IsConnected:", isConnected, "HasSetPassword:", hasSetPassword, "IsAuthenticated:", isPasswordConfirmed);
-
-  if (!isPasswordConfirmed) {
-    return <div className="mt-8 text-center">Please connect your wallet to continue.</div>;
+  if (!isConnected || !address) {
+    return (
+      <div className="mt-8 text-center">
+        <p>Please connect your wallet to continue.</p>
+      </div>
+    );
   }
-
   if (!hasSetPassword) {
     return (
       <div className="mt-8 max-w-md mx-auto">
