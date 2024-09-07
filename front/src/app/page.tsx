@@ -54,11 +54,6 @@ function TicketInterface() {
     setKeyPairs([pair1, pair2]);
   };
 
-  const handleSwap = () => {
-    // Implement swap logic here
-    console.log("Swap functionality to be implemented");
-  };
-
   const handleTicketClick = (item: Item) => {
     const slug = item.title.toLowerCase().replace(/ /g, '-');
     router.push(`/event/${slug}`);
@@ -73,12 +68,6 @@ function TicketInterface() {
           className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
         >
           Generate Key Pairs
-        </button>
-        <button
-          onClick={handleSwap}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          Swap
         </button>
       </div>
       

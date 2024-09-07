@@ -46,7 +46,8 @@ export const eventData: { [key: string]: EventDetails } = {
   }
 };
 
-export default function EventPage({ eventSlug }: { eventSlug: string }) {
+export default function EventPage({ params }: { params: { slug: string } }) {
+  const eventSlug = params.slug;
   const event = eventData[eventSlug];
 
   if (!event) {
