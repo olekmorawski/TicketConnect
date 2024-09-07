@@ -21,7 +21,6 @@ function TicketInterface() {
   const [keyPairs, setKeyPairs] = useState<KeyPair[]>([]);
   const { isConnected } = useAccount();
 
-  // Sample items data
   const items: Item[] = [
     { id: 1, title: "Concert Ticket", price: 50, imageUrl: "/api/placeholder/200/200" },
     { id: 2, title: "Movie Pass", price: 15, imageUrl: "/api/placeholder/200/200" },

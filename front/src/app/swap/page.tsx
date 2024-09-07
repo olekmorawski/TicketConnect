@@ -14,13 +14,11 @@ function Swap() {
   const [selectedUserTicket, setSelectedUserTicket] = useState<Ticket | null>(null);
   const [selectedAvailableTicket, setSelectedAvailableTicket] = useState<Ticket | null>(null);
 
-  // Sample user tickets
   const userTickets: Ticket[] = [
     { id: 1, title: "Concert A Ticket", price: 50, imageUrl: "/api/placeholder/200/200" },
     { id: 2, title: "Movie Pass", price: 15, imageUrl: "/api/placeholder/200/200" },
   ];
 
-  // Sample available tickets for swap
   const availableTickets: Ticket[] = [
     { id: 3, title: "Sports Event", price: 80, imageUrl: "/api/placeholder/200/200" },
     { id: 4, title: "Theater Show", price: 65, imageUrl: "/api/placeholder/200/200" },
@@ -41,14 +39,11 @@ function Swap() {
       return;
     }
     
-    // Here you would typically call a smart contract function to perform the swap
     console.log(`Swapping ${selectedUserTicket.title} for ${selectedAvailableTicket.title}`);
     
-    // Reset selections after swap
     setSelectedUserTicket(null);
     setSelectedAvailableTicket(null);
     
-    // In a real application, you would update the ticket lists here
     alert("Swap completed successfully!");
   };
 
