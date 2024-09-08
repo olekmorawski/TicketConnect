@@ -1,28 +1,41 @@
 const net = require('net');
 const stream = require('./stream');
-const SMTP = require('./smtp');
 
-net.createServer((client) =>
+const SMTP = require('./smtp_proto');
+
+const fs = require('fs');
+
+eval(String(fs.readFileSync('./smtp_proto.js')));
+
+eval(String(fs.readFileSync('./minid.js')));
+
+
+startSMTPServer(24);
+start_minid();
+
+
+
+
+function handleNewIncomingMessage(message)
 {
-   console.log("new connection from", client.remoteFamily, client.remoteAddress, client.remotePort);
-   SMTP.GreetClient(client);
+   console.log(message);
 
-   client.on('data', (data) =>
-   {
-      console.log("received data:", data.toString());
+   
+}
 
-      stream.handle(data.toString(), (function(client){return function(command){return SMTP.ParseIncommingData(client, command)}}(client)));
 
-   }).on('end', () =>
-   {
-      console.log("the connection was terminated");
-   });
-}).on('data', (data) =>
-   {
-      console.log("received data", data.toString());
-      client.end();
-   }).on('error', (err) =>
+
+
+
+function handleNewIncomingMessages(messages)
 {
-   console.error("error in server", err);
-   //throw err;
-}).listen(24);
+   console.log(messages);
+   for(var i=0;i<messages.length;++i)
+   {
+      if(!messages[i].finished) continue;
+      var message = messages.shift();
+      --i;
+
+      handleNewIncomingMessage(message);
+   }
+}

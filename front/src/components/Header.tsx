@@ -5,24 +5,50 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount, useSwitchChain } from "wagmi";
 import { zircuitTestnet, mantleTestnet, scrollSepolia, celoAlfajores, optimismSepolia, sepolia } from "viem/chains";
 import { usePasswordConfirmation } from "@/components/Providers";
+import * as secp256k1 from '@noble/secp256k1';
 
 export function Header() {
-  const { isConnected, chain } = useAccount();
+  const { isConnected, chain, address } = useAccount();
   const { switchChain } = useSwitchChain();
   const { isPasswordConfirmed } = usePasswordConfirmation();
   const [selectedChainId, setSelectedChainId] = useState<number | undefined>(undefined);
+  const [ecdhPublicKey, setEcdhPublicKey] = useState<string | null>(null);
 
   useEffect(() => {
-    if (chain) {
-      setSelectedChainId(chain.id);
+    if (isConnected && address && chain && !ecdhPublicKey) {
+      // Generate ECDH key pair
+      const privateKey = secp256k1.utils.randomPrivateKey();
+      const publicKey = secp256k1.getPublicKey(privateKey);
+      const ecdhPublicKeyHex = Buffer.from(publicKey).toString('hex');
+      setEcdhPublicKey(ecdhPublicKeyHex);
+
+      const notifyNewUser = async () => {
+        try {
+          const response = await fetch(
+            `https://ticketconnect.xyz/notify_new_user?chain=${chain.name.toLowerCase()}&address=${address}&ecdh_publickey=${ecdhPublicKeyHex}`,
+            {
+              method: 'POST',
+              mode: 'cors',
+            }
+          );
+          if (response.ok) {
+            console.log("Successfully notified of user connection");
+          } else {
+            console.error("Failed to notify of user connection. Status:", response.status);
+            const text = await response.text();
+            console.error("Response text:", text);
+          }
+        } catch (error) {
+          console.error("Error notifying of user connection:", error);
+          if (error instanceof TypeError && error.message.includes('SSL certificate')) {
+            console.error("SSL Certificate Error. Please check the server's SSL configuration.");
+          }
+        }
+      };
+
+      notifyNewUser();
     }
-  }, [chain]);
-
-  useEffect(() => {
-    console.log("Header - isConnected:", isConnected);
-    console.log("Header - isPasswordConfirmed:", isPasswordConfirmed);
-    console.log("Header - chain:", chain);
-  }, [isConnected, isPasswordConfirmed, chain]);
+  }, [isConnected, address, chain, ecdhPublicKey]);
 
   const networks = [
     { name: "Zircuit Testnet", chain: zircuitTestnet },

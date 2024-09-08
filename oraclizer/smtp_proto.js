@@ -1,4 +1,4 @@
-class connection
+class Connection
 {
    constructor(receivingData, emptyLinesContCount)
    {
@@ -7,6 +7,20 @@ class connection
    }
 }
 var connections = [];
+
+class Message
+{
+   constructor()
+   {
+      this.data = "";
+      this.finished = false;
+   }
+};
+var messages = [];
+exports.GetMessages = function()
+{
+   return messages;
+}
 
 function SendToClient(client, data)
 {
@@ -19,30 +33,37 @@ exports.GreetClient = function(client)
    SendToClient(client, '220 smtp.example.com ESMTP OurOraclizer\r\n')
 }
 
-exports.ParseIncommingData = function(client, command)
+exports.ParseIncomingData = function(client, command)
 {
    if(connections[client.remotePort] === undefined
       || connections[client.remotePort].receivingData === undefined
       || connections[client.remotePort].emptyLinesContCount === undefined)
-      connections[client.remotePort] = new connection(false, 0);
+      connections[client.remotePort] = new Connection(false, 0);
 
-   if(command.length == 0)
+   if(connections[client.remotePort].receivingData)
    {
-      ++(connections[client.remotePort].emptyLinesContCount);
-      return;
-   }
-   else if(connections[client.remotePort].emptyLinesContCount >= 2
-      && command.length > 0 && command[0] == '.')
-   {
-      connections[client.remotePort].receivingData = false;
-      connections[client.remotePort].emptyLinesContCount = 0;
-      console.log("end of data block in message");
+      if(command.length == 0)
+      {
+         ++(connections[client.remotePort].emptyLinesContCount);
+         return;
+      }
+      else if(connections[client.remotePort].emptyLinesContCount >= 2
+         && command.length > 0 && command[0] == '.')
+      {
+         console.log("end of data block in message");
 
-      command = command.substring(1);
-      if(command.length == 0) return;
-   }
+         connections[client.remotePort].receivingData = false;
+         connections[client.remotePort].emptyLinesContCount = 0;
 
-   if(!(connections[client.remotePort].receivingData))
+         messages[connections[client.remotePort].message_i].finished = true;
+
+         command = command.substring(1);
+         if(command.length == 0) return;
+      }
+      else
+         messages[connections[client.remotePort].message_i].data += command+'\n';
+   }
+   else
    {
       var command_args = command.split(' ');
       console.log("command_args", command_args);
@@ -65,6 +86,10 @@ exports.ParseIncommingData = function(client, command)
          SendToClient(client, '250 Ok\r\n');
          console.log("begin of data block in message");
          connections[client.remotePort].receivingData = true;
+         var message_i = messages.length;
+         connections[client.remotePort].message_i = message_i;
+
+         messages[message_i] = new Message();
       }
       else if(/*command_args.length == 2 &&*/ command_args[0] == "RSET")
       {
