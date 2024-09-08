@@ -1,5 +1,7 @@
-const SMTP = require('./smtp');
 const net = require('net');
+const stream = require('./stream');
+const SMTP = require('./smtp');
+
 net.createServer((client) =>
 {
    console.log("new connection from", client.remoteFamily, client.remoteAddress, client.remotePort);
@@ -9,7 +11,8 @@ net.createServer((client) =>
    {
       console.log("received data:", data.toString());
 
-      SMTP.ParseIncommingData(client, data.toString());
+      stream.handle(data.toString(), (function(client){return function(command){return SMTP.ParseIncommingData(client, command)}}(client)));
+
    }).on('end', () =>
    {
       console.log("the connection was terminated");
