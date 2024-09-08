@@ -1,4 +1,4 @@
-void startSMTPServer(port)
+function startSMTPServer(port)
 {
    net.createServer((client) =>
    {

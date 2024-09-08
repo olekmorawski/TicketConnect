@@ -2,13 +2,19 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount, useSwitchChain } from "wagmi";
-import { zircuitTestnet, mantleTestnet, scrollSepolia, celoAlfajores, optimismSepolia, sepolia } from "viem/chains";
+import { useAccount, useSwitchChain, useEnsName, useEnsAvatar } from "wagmi";
+import { zircuitTestnet, mantleTestnet, scrollSepolia, celoAlfajores, optimismSepolia, sepolia, mainnet } from "viem/chains";
 import { usePasswordConfirmation } from "@/components/Providers";
 import * as secp256k1 from '@noble/secp256k1';
+import { formatAddress } from '@ens-tools/format';
 
 export function Header() {
   const { isConnected, chain, address } = useAccount();
+  const { data: ensName } = useEnsName({ address });
+  const { data: ensAvatar } = useEnsAvatar({
+    name: ensName ?? undefined,
+    chainId: mainnet.id, // ENS is on Ethereum mainnet
+  });
   const { switchChain } = useSwitchChain();
   const { isPasswordConfirmed } = usePasswordConfirmation();
   const [selectedChainId, setSelectedChainId] = useState<number | undefined>(undefined);
@@ -61,7 +67,7 @@ export function Header() {
 
   const handleNetworkChange = (chainId: number) => {
     setSelectedChainId(chainId);
-    switchChain?.({ chainId });
+    switchChain({ chainId });
   };
 
   return (
@@ -83,6 +89,16 @@ export function Header() {
           </nav>
         </div>
         <div className="flex items-center space-x-4">
+          {isConnected && address && (
+            <div className="flex items-center space-x-2">
+              {ensAvatar && (
+                <img src={ensAvatar} alt="ENS Avatar" className="w-8 h-8 rounded-full" />
+              )}
+              <span className="font-semibold">
+                {ensName || formatAddress(address)}
+              </span>
+            </div>
+          )}
           <ConnectButton />
           {isConnected && (
             <select

@@ -35,7 +35,9 @@ export default function MyTickets() {
   };
 
   const handleListingPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setListingPrice(e.target.value);
+    //setListingPrice(e.target.value);
+
+    console.error("DUPA KURWA CHUJ");
   };
 
   const handleListTicket = () => {

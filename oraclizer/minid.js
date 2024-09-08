@@ -16,7 +16,7 @@ function start_minid()
 }
 
 
-app.post('/upload', upload.single('file'), async (req, res) => {
+/*app.post('/upload', upload.single('file'), async (req, res) => {
   /*try {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
@@ -34,8 +34,8 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred during file upload' });
-  }*/
-});
+  }*//*
+});*/
 
 app.get('/file/:cid', async (req, res) => {
   /*try {
@@ -63,5 +63,5 @@ app.get('/signed-url/:cid', async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Pinata app listening at http://localhost:${port}`);
+  console.log(`minid listening at http://localhost:${port}`);
 });
