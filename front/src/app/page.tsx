@@ -80,7 +80,6 @@ function TicketInterface() {
     return (
       <div className="mt-8 text-center">
         <p>Please connect your wallet to continue.</p>
-        <ConnectButton />
       </div>
     );
   }
@@ -156,7 +155,6 @@ function TicketInterface() {
         >
           Refresh Tickets
         </button>
-        <ConnectButton />
       </div>
       
       {isLoading && <p>Loading tickets...</p>}
