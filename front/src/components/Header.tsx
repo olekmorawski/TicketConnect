@@ -43,11 +43,16 @@ export function Header() {
       <div className="flex justify-between items-center w-full mb-4">
         <div className="flex items-center space-x-6">
           <h1 className="text-2xl font-bold">Ticket Swap</h1>
-          <nav>
+          <nav className="space-x-4">
             {isConnected && isPasswordConfirmed && (
-              <Link href="/swap" className="text-blue-600 hover:text-blue-800 font-semibold">
-                Swap Tickets
-              </Link>
+              <>
+                <Link href="/mytickets" className="text-blue-600 hover:text-blue-800 font-semibold">
+                  My Tickets
+                </Link>
+                <Link href="/swap" className="text-blue-600 hover:text-blue-800 font-semibold">
+                  Swap Tickets
+                </Link>
+              </>
             )}
           </nav>
         </div>
