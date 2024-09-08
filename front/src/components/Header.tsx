@@ -7,7 +7,7 @@ import { zircuitTestnet, mantleTestnet, scrollSepolia, celoAlfajores, optimismSe
 import { usePasswordConfirmation, useWallet } from "@/components/Providers";
 
 export function Header() {
-  const { isConnected, address, chain } = useWallet();
+  const { isConnected, chain } = useWallet();
   const { connect, connectors } = useConnect();
   const { disconnect } = useDisconnect();
   const { switchChain } = useSwitchChain();
