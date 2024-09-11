@@ -1,7 +1,7 @@
-import express from 'express';
-import { PinataSDK } from 'pinata';
-import dotenv from 'dotenv';
-import multer from 'multer';
+import express from "express";
+import { PinataSDK } from "pinata";
+import dotenv from "dotenv";
+import multer from "multer";
 
 dotenv.config();
 
@@ -17,39 +17,43 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(express.json());
 
-app.post('/upload', upload.single('file'), async (req, res) => {
+app.post("/upload", upload.single("file"), async (req, res) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
+      return res.status(400).json({ error: "No file uploaded" });
     }
 
-    const file = new File([req.file.buffer], req.file.originalname, { type: req.file.mimetype });
+    const file = new File([req.file.buffer], req.file.originalname, {
+      type: req.file.mimetype,
+    });
     const upload = await pinata.upload.file(file);
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       cid: upload.IpfsHash,
       name: req.file.originalname,
       size: req.file.size,
-      mimetype: req.file.mimetype
+      mimetype: req.file.mimetype,
     });
-    } catch (error) {
+  } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'An error occurred during file upload' });
+    res.status(500).json({ error: "An error occurred during file upload" });
   }
 });
 
-app.get('/file/:cid', async (req, res) => {
+app.get("/file/:cid", async (req, res) => {
   try {
     const { cid } = req.params;
     const data = await pinata.gateways.get(cid);
     res.send(data);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'An error occurred while retrieving the file' });
+    res
+      .status(500)
+      .json({ error: "An error occurred while retrieving the file" });
   }
 });
 
-app.get('/signed-url/:cid', async (req, res) => {
+app.get("/signed-url/:cid", async (req, res) => {
   try {
     const { cid } = req.params;
     const url = await pinata.gateways.createSignedURL({
@@ -59,7 +63,9 @@ app.get('/signed-url/:cid', async (req, res) => {
     res.json({ url });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'An error occurred while creating the signed URL' });
+    res
+      .status(500)
+      .json({ error: "An error occurred while creating the signed URL" });
   }
 });
 
