@@ -38,7 +38,6 @@ const getTickets = (): Ticket[] => {
       isRedeemed: false,
       currentOwner: "0x0000000000000000000000000000000000000000",
     },
-    // Add more tickets here...
   ];
 };
 
@@ -73,7 +72,7 @@ export default function EventPage({ params }: { params: { slug: string } }) {
             <strong>Location:</strong> {event.eventLocation}
           </p>
           <p>
-            <strong>Date and Time:</strong>{" "}
+            <strong>Date and Time:</strong>
             {new Date(Number(event.arrivedAt) * 1000).toLocaleString()}
           </p>
           <p>
@@ -82,14 +81,6 @@ export default function EventPage({ params }: { params: { slug: string } }) {
           <p>
             <strong>Vendor:</strong> {event.vendorDomainName}
           </p>
-          <p>
-            <strong>Status:</strong> {event.isSold ? "Sold" : "Available"}
-          </p>
-          {event.isRedeemed && (
-            <p>
-              <strong>Redeemed:</strong> Yes
-            </p>
-          )}
         </div>
         <div>
           <h2 className="text-xl font-semibold mb-2">Ticket Information</h2>
@@ -106,16 +97,6 @@ export default function EventPage({ params }: { params: { slug: string } }) {
           <button className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700">
             Buy Ticket
           </button>
-        )}
-        {event.isSold && !event.isRedeemed && (
-          <button className="px-6 py-2 bg-green-600 text-white rounded-full hover:bg-green-700">
-            Redeem Ticket
-          </button>
-        )}
-        {event.isRedeemed && (
-          <p className="text-green-600 font-semibold">
-            This ticket has been redeemed
-          </p>
         )}
       </div>
     </div>
