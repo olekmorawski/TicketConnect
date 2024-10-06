@@ -1,16 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useAccount } from "wagmi";
-import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import * as secp256k1 from "@noble/secp256k1";
 import { useRouter } from "next/navigation";
 import { usePasswordConfirmation, useWallet } from "@/components/Providers";
-
-interface KeyPair {
-  publicKey: `0x${string}`;
-  privateKey: `0x${string}`;
-  ecdhPublicKey: string;
-}
+import Image from "next/image";
 
 interface Item {
   id: number;
@@ -23,7 +15,6 @@ interface Item {
 }
 
 function TicketInterface() {
-  const [keyPairs, setKeyPairs] = useState<KeyPair[]>([]);
   const { isConnected, address } = useWallet();
   const router = useRouter();
   const [hasSetPassword, setHasSetPassword] = useState(false);
@@ -91,31 +82,16 @@ function TicketInterface() {
     },
   ];
 
-  const generateKeyPairs = () => {
-    const generatePair = (): KeyPair => {
-      const privateKey = generatePrivateKey();
-      const account = privateKeyToAccount(privateKey);
-
-      const privateKeyBytes = Buffer.from(privateKey.slice(2), "hex");
-      const ecdhPublicKey = Buffer.from(
-        secp256k1.getPublicKey(privateKeyBytes)
-      ).toString("hex");
-
-      return {
-        publicKey: account.address,
-        privateKey: privateKey,
-        ecdhPublicKey: ecdhPublicKey,
-      };
-    };
-
-    const pair1 = generatePair();
-    const pair2 = generatePair();
-
-    setKeyPairs([pair1, pair2]);
+  const generateSlug = (str: string) => {
+    return str
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)+/g, "");
   };
 
   const handleTicketClick = (item: Item) => {
-    const slug = item.title.toLowerCase().replace(/ /g, "-");
+    const slug = generateSlug(item.title);
+    console.log("Redirecting to:", `/event/${slug}`);
     router.push(`/event/${slug}`);
   };
 
@@ -234,16 +210,6 @@ function TicketInterface() {
 
   return (
     <div className="mt-8">
-      <h2 className="text-2xl font-bold mb-4">Swap</h2>
-      <div className="flex space-x-4 mb-4">
-        <button
-          onClick={generateKeyPairs}
-          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
-        >
-          Generate Key Pairs
-        </button>
-      </div>
-
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {items.map((item) => (
           <div
@@ -251,9 +217,11 @@ function TicketInterface() {
             className="border rounded-lg p-4 flex flex-col items-center cursor-pointer"
             onClick={() => handleTicketClick(item)}
           >
-            <img
+            <Image
               src={item.imageUrl}
               alt={item.title}
+              width={100}
+              height={100}
               className="w-full h-40 object-cover mb-2 rounded"
             />
             <h3 className="text-lg font-semibold">{item.title}</h3>
@@ -261,20 +229,6 @@ function TicketInterface() {
           </div>
         ))}
       </div>
-
-      {keyPairs.length > 0 && (
-        <div className="mt-4">
-          <h3 className="text-lg font-semibold">Generated Key Pairs:</h3>
-          {keyPairs.map((pair, index) => (
-            <div key={index} className="mt-2">
-              <p>Pair {index + 1}:</p>
-              <p>Public Key: {pair.publicKey}</p>
-              <p>Private Key: {pair.privateKey}</p>
-              <p>ECDH Public Key: {pair.ecdhPublicKey}</p>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

@@ -18,6 +18,13 @@ interface Ticket {
   currentOwner: `0x${string}`;
 }
 
+const generateSlug = (str: string) => {
+  return str
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
+};
+
 export default function EventPage({ params }: { params: { slug: string } }) {
   const eventSlug = params.slug;
 
@@ -39,8 +46,11 @@ export default function EventPage({ params }: { params: { slug: string } }) {
     return <div>Error loading ticket data</div>;
   }
 
+  console.log("Received slug:", eventSlug);
+  console.log("Available tickets:", tickets);
+
   const event = tickets?.find(
-    (ticket) => ticket.eventName.toLowerCase().replace(/ /g, "-") === eventSlug
+    (ticket) => generateSlug(ticket.eventName) === eventSlug
   );
 
   if (!event) {

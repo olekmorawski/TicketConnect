@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useAccount } from "wagmi";
+import Image from "next/image";
 
 interface Ticket {
   id: number;
@@ -92,8 +93,10 @@ function Swap() {
       }`}
       onClick={() => onSelect(ticket)}
     >
-      <img
+      <Image
         src={ticket.imageUrl}
+        width={100}
+        height={100}
         alt={ticket.title}
         className="w-full h-40 object-cover mb-2 rounded"
       />

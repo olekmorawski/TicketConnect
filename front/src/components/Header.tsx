@@ -2,16 +2,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAccount, useSwitchChain, useEnsName, useEnsAvatar } from "wagmi";
-import {
-  zircuitTestnet,
-  mantleTestnet,
-  scrollSepolia,
-  celoAlfajores,
-  optimismSepolia,
-  sepolia,
-  mainnet,
-} from "viem/chains";
+import { useAccount, useEnsName, useEnsAvatar } from "wagmi";
+import { mainnet } from "viem/chains";
 import { usePasswordConfirmation } from "@/components/Providers";
 import * as secp256k1 from "@noble/secp256k1";
 import { formatAddress } from "@ens-tools/format";
@@ -23,11 +15,8 @@ export function Header() {
     name: ensName ?? undefined,
     chainId: mainnet.id, // ENS is on Ethereum mainnet
   });
-  const { switchChain } = useSwitchChain();
   const { isPasswordConfirmed } = usePasswordConfirmation();
-  const [selectedChainId, setSelectedChainId] = useState<number | undefined>(
-    undefined
-  );
+
   const [ecdhPublicKey, setEcdhPublicKey] = useState<string | null>(null);
 
   useEffect(() => {
@@ -74,20 +63,6 @@ export function Header() {
     }
   }, [isConnected, address, chain, ecdhPublicKey]);
 
-  const networks = [
-    { name: "Zircuit Testnet", chain: zircuitTestnet },
-    { name: "Mantle Testnet", chain: mantleTestnet },
-    { name: "Scroll Sepolia", chain: scrollSepolia },
-    { name: "Celo Alfajores", chain: celoAlfajores },
-    { name: "Optimism Sepolia", chain: optimismSepolia },
-    { name: "Ethereum Sepolia", chain: sepolia },
-  ];
-
-  const handleNetworkChange = (chainId: number) => {
-    setSelectedChainId(chainId);
-    switchChain({ chainId });
-  };
-
   return (
     <header className="flex flex-col items-start p-4">
       <div className="flex justify-between items-center w-full mb-4">
@@ -128,19 +103,6 @@ export function Header() {
             </div>
           )}
           <ConnectButton />
-          {isConnected && (
-            <select
-              onChange={(e) => handleNetworkChange(parseInt(e.target.value))}
-              value={selectedChainId}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-            >
-              {networks.map((network) => (
-                <option key={network.chain.id} value={network.chain.id}>
-                  {network.name}
-                </option>
-              ))}
-            </select>
-          )}
         </div>
       </div>
     </header>
