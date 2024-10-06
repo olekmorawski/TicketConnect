@@ -1,9 +1,7 @@
 "use client";
 import React from "react";
 import { notFound } from "next/navigation";
-import { useReadContract } from "wagmi";
 import { formatEther } from "viem";
-import { contractABI, contractAddress } from "../../../constants/abi";
 
 interface Ticket {
   ticketId: string;
@@ -18,29 +16,41 @@ interface Ticket {
   currentOwner: `0x${string}`;
 }
 
+const generateSlug = (str: string) => {
+  return str
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
+};
+
+const getTickets = (): Ticket[] => {
+  return [
+    {
+      ticketId: "CT001",
+      vendorDomainName: "concertorganizer.com",
+      eventName: "Concert Ticket",
+      eventLocation: "City Arena",
+      originalPrice: BigInt(50 * 1e18), // 50 ETH
+      arrivedAt: BigInt(new Date("2024-09-15 20:00").getTime() / 1000),
+      ecdhTicketSecretPart:
+        "0x0000000000000000000000000000000000000000000000000000000000000000",
+      isSold: false,
+      isRedeemed: false,
+      currentOwner: "0x0000000000000000000000000000000000000000",
+    },
+  ];
+};
+
 export default function EventPage({ params }: { params: { slug: string } }) {
   const eventSlug = params.slug;
 
-  const {
-    data: tickets,
-    isError,
-    isLoading,
-  } = useReadContract({
-    address: contractAddress,
-    abi: contractABI,
-    functionName: "listTickets",
-  }) as { data: Ticket[]; isError: boolean; isLoading: boolean };
+  const tickets = getTickets();
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  console.log("Received slug:", eventSlug);
+  console.log("Available tickets:", tickets);
 
-  if (isError) {
-    return <div>Error loading ticket data</div>;
-  }
-
-  const event = tickets?.find(
-    (ticket) => ticket.eventName.toLowerCase().replace(/ /g, "-") === eventSlug
+  const event = tickets.find(
+    (ticket) => generateSlug(ticket.eventName) === eventSlug
   );
 
   if (!event) {
@@ -62,7 +72,7 @@ export default function EventPage({ params }: { params: { slug: string } }) {
             <strong>Location:</strong> {event.eventLocation}
           </p>
           <p>
-            <strong>Date and Time:</strong>{" "}
+            <strong>Date and Time:</strong>
             {new Date(Number(event.arrivedAt) * 1000).toLocaleString()}
           </p>
           <p>
@@ -71,14 +81,6 @@ export default function EventPage({ params }: { params: { slug: string } }) {
           <p>
             <strong>Vendor:</strong> {event.vendorDomainName}
           </p>
-          <p>
-            <strong>Status:</strong> {event.isSold ? "Sold" : "Available"}
-          </p>
-          {event.isRedeemed && (
-            <p>
-              <strong>Redeemed:</strong> Yes
-            </p>
-          )}
         </div>
         <div>
           <h2 className="text-xl font-semibold mb-2">Ticket Information</h2>
@@ -95,16 +97,6 @@ export default function EventPage({ params }: { params: { slug: string } }) {
           <button className="px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700">
             Buy Ticket
           </button>
-        )}
-        {event.isSold && !event.isRedeemed && (
-          <button className="px-6 py-2 bg-green-600 text-white rounded-full hover:bg-green-700">
-            Redeem Ticket
-          </button>
-        )}
-        {event.isRedeemed && (
-          <p className="text-green-600 font-semibold">
-            This ticket has been redeemed
-          </p>
         )}
       </div>
     </div>

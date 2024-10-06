@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function MyTickets() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,7 +24,6 @@ export default function MyTickets() {
   };
 
   const handleRedeem = () => {
-    // Add redeem logic here
     console.log("Redeem ticket");
   };
 
@@ -35,7 +33,6 @@ export default function MyTickets() {
   };
 
   const handleListingPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //setListingPrice(e.target.value);
 
     console.error("DUPA KURWA CHUJ");
   };
@@ -57,13 +54,6 @@ export default function MyTickets() {
   return (
     <div className="mt-8">
       <h2 className="text-2xl font-bold mb-4">My Tickets</h2>
-      <div className="flex space-x-4 mb-4">
-        <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
-          Refresh My Tickets
-        </button>
-        <ConnectButton />
-      </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         <div className="border rounded-lg p-4 flex flex-col items-center">
           <img
