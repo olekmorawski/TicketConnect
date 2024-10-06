@@ -1,9 +1,7 @@
 "use client";
 import React from "react";
 import { notFound } from "next/navigation";
-import { useReadContract } from "wagmi";
 import { formatEther } from "viem";
-import { contractABI, contractAddress } from "../../../constants/abi";
 
 interface Ticket {
   ticketId: string;
@@ -25,31 +23,34 @@ const generateSlug = (str: string) => {
     .replace(/(^-|-$)+/g, "");
 };
 
+const getTickets = (): Ticket[] => {
+  return [
+    {
+      ticketId: "CT001",
+      vendorDomainName: "concertorganizer.com",
+      eventName: "Concert Ticket",
+      eventLocation: "City Arena",
+      originalPrice: BigInt(50 * 1e18), // 50 ETH
+      arrivedAt: BigInt(new Date("2024-09-15 20:00").getTime() / 1000),
+      ecdhTicketSecretPart:
+        "0x0000000000000000000000000000000000000000000000000000000000000000",
+      isSold: false,
+      isRedeemed: false,
+      currentOwner: "0x0000000000000000000000000000000000000000",
+    },
+    // Add more tickets here...
+  ];
+};
+
 export default function EventPage({ params }: { params: { slug: string } }) {
   const eventSlug = params.slug;
 
-  const {
-    data: tickets,
-    isError,
-    isLoading,
-  } = useReadContract({
-    address: contractAddress,
-    abi: contractABI,
-    functionName: "listTickets",
-  }) as { data: Ticket[]; isError: boolean; isLoading: boolean };
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (isError) {
-    return <div>Error loading ticket data</div>;
-  }
+  const tickets = getTickets();
 
   console.log("Received slug:", eventSlug);
   console.log("Available tickets:", tickets);
 
-  const event = tickets?.find(
+  const event = tickets.find(
     (ticket) => generateSlug(ticket.eventName) === eventSlug
   );
 

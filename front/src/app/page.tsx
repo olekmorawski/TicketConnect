@@ -12,6 +12,11 @@ interface Item {
   description: string;
   location: string;
   time: string;
+  vendorDomainName: string;
+  ticketId: string;
+  isSold: boolean;
+  isRedeemed: boolean;
+  currentOwner: string;
 }
 
 function TicketInterface() {
@@ -52,33 +57,11 @@ function TicketInterface() {
       description: "An amazing concert experience",
       location: "City Arena",
       time: "2024-09-15 20:00",
-    },
-    {
-      id: 2,
-      title: "Movie Pass",
-      price: 15,
-      imageUrl: "/api/placeholder/200/200",
-      description: "Enjoy the latest blockbuster",
-      location: "Cineplex",
-      time: "2024-09-16 19:30",
-    },
-    {
-      id: 3,
-      title: "Sports Event",
-      price: 80,
-      imageUrl: "/api/placeholder/200/200",
-      description: "Exciting sports match",
-      location: "Sports Stadium",
-      time: "2024-09-17 15:00",
-    },
-    {
-      id: 4,
-      title: "Theater Show",
-      price: 65,
-      imageUrl: "/api/placeholder/200/200",
-      description: "A captivating theatrical performance",
-      location: "Grand Theater",
-      time: "2024-09-18 19:00",
+      vendorDomainName: "concertorganizer.com",
+      ticketId: "CT001",
+      isSold: false,
+      isRedeemed: false,
+      currentOwner: "0x0000000000000000000000000000000000000000",
     },
   ];
 
